@@ -20,6 +20,7 @@ import sys
 import platform
 import os
 import datetime
+import pathlib
 
 # Third Party Libraries
 import pandas as pd
@@ -37,7 +38,7 @@ import tksheet7
 _debug = True  # False to eliminate debug printing from callback functions.
 location = tksheet7._location
 programName = "PAGE TkSheet 7.3.2 Demo"
-version = "0.1.0"
+version = "0.1.1"
 
 
 def main(*args):
@@ -262,9 +263,12 @@ def on_btnLoad(*args):
         title="Select file",
         filetypes=(("CSV files", "*.csv"), ("all files", "*.*")),
     )
-    _w1.StatusInfo1.set("")
-    _w1.StatusInfo2.set("  Loading Data")
-    insert_data(filename)
+    if len(filename) < 1:
+        pass
+    else:
+        _w1.StatusInfo1.set("")
+        _w1.StatusInfo2.set("  Loading Data")
+        insert_data(filename)
 
 
 def insert_data(filename):
@@ -275,9 +279,8 @@ def insert_data(filename):
         filename (string): fully qualified path to the dataset
     """
     busyStart()
-
-    datasetpos = filename.rfind("/")
-    dataset = filename[datasetpos + 1 :]
+    path = pathlib.Path(filename)
+    dataset = path.name
     data = load_csv_file(filename)
     # print(headers)
     sheet.headers(headers)
